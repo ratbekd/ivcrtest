@@ -1,0 +1,23 @@
+Package: ivcrtest
+Type: Package
+Title: ivcrtest test the validity of an IV
+Version: 0.1.0
+Authors@R: c(
+    person("Ratbek", "Dzhumashev", email= "ratbek.dzhumashev@monash.edu", role = c("aut", "cre")),
+    person("Ainura", "Tursunalieva", email = "ainura.tursunalieva@data61.csiro.au", role = "aut"))
+Description: The package estimates  linear regression models with one endogenous variable using the synthetic IV method.
+License: License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.3.3
+Imports: 
+    AER,
+    dplyr,
+    e1071,
+    MASS,
+    sandwich,
+    stats,
+    wooldridge
