@@ -3,6 +3,7 @@ Testing the validity of IVs using the Correlation Restriction
 
 To install the package, use this code:
 remotes::install_git("https://github.com/ratbekd/ivcrtest.git")
+
 library(ivcrtest)
 
  One can test the package using this code:
