@@ -25,9 +25,9 @@ test_that("iv_cr_test returns expected CI structure", {
   X <- "x"
   Z <- "z"
   H <- c("h1", "h2", "h3")
-
+data <- df
   # Run the function
-  res <- iv_cr_test(data = df, X = X, Y = Y, H = H, Z = Z, n = nrow(df), k = -1)
+  res <- iv_cr_test(data, X = X, Y = Y, H = H, Z = Z, n = nrow(df), k = -1)
 
   # --- Expectations ---
   # Check that result is a data frame

@@ -2,8 +2,6 @@
 #' @param deltahat row or column vectors/matrices.
 #' @param Al constraint matrices
 #' @param Au constraint matrices
-#' @param sigma_l standard deviations of lambda_hat_l / u
-#' @param sigma_u standard deviations of lambda_hat_l / u
 #' @param deltaSigma (B x k) matrix
 #' @param alpha,  critical levels
 #' @param alphac critical levels
