@@ -27,18 +27,14 @@ test_that("iv_cr_test returns expected CI structure", {
   H <- c("h1", "h2", "h3")
 data <- df
   # Run the function
-<<<<<<< HEAD
+
   res <- iv_cr_test(data = df, X = X, Y = Y, H = H, Z = Z, n = nrow(df), k = -1, alpha = 0.05,
                     seed = 123,
                     rxu_range = c(0, 0.8),
                     bias_mc = FALSE,
                     mc_B = 500)
-    # --- Expectations ---
-=======
-  res <- iv_cr_test(data, X = X, Y = Y, H = H, Z = Z, n = nrow(df), k = -1)
 
   # --- Expectations ---
->>>>>>> 102ddd71075d4e85a96573aacee4e0717e4e90b5
   # Check that result is a data frame
   expect_s3_class(res, "data.frame")
 

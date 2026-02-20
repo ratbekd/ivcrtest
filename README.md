@@ -5,14 +5,9 @@ We develop a Correlation Restriction (CR) test for assessing the validity of ins
 
 # The package
 Testing the validity of IVs using the Correlation Restriction
-The package computes the union bound CIs (simple and Bei (2024)) and the coverage, overlap and containment probabilities
-
-
-Pr(C is a subset of  C_n | r_xu in D), 
+The package computes the union bound CIs (simple and Bei (2024))  membership probability
 
 Pr(r_zu=0 is a in C_n | r_xu in D), 
-
-Pr([theta_0min, theta_0max] is a in C_n | r_xu in D).
 
 To install the package, use this code:
 remotes::install_git("https://github.com/ratbekd/ivcrtest.git")
@@ -38,7 +33,7 @@ Z <-as.character(colnames(H0))[3] ###IV variable
 
 H <-as.character(colnames(H0))[-(1:3)] ##### EXOGENOUS variables
 
-result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8),bias_mc = TRUE,mc_B = 500)
+result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8))
 
 # Output
 
@@ -60,25 +55,8 @@ CI_Bei                    [-0.83,0.08]
 
 Plug_covered_CI_Bei                  ✓
 
-p_coverage                        0.88
-
 CI_simple                 [-0.86,0.13]
-
-Plug_covered_CI_s                    ✓
-
-p_coverage_s                     0.985
 
 Zero_in_CI_Bei                       ✓
 p_zero                               1
 
-Target_interval           [-0.05,0.04]
-
-Target_interval_overlap              ✓
-
-Prob_Target_inter_overlap         0.95
-
-CI_Bei_contains_TI                   ✓
-
-Prob_Target_inter_cont           0.952
-
-Prob_Target_inter_cont_s          0.82
