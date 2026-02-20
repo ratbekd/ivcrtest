@@ -51,18 +51,15 @@ s <- min(length(y),length(x), length(z0) )
 z <- z0[1:s]
 
 df <- data.frame(x[1:s],y[1:s],z[1:s])
+names(df) <- c("x","y","z")
 
-data=df
 # Run the function
 test_result <- check_compatibility(
-  data= df,
+  df= df,
   n = n,
   k = -1,
   alpha = 0.05,
-  seed = 123,
-  rxu_range = c(0, 0.8),
-  bias_mc = TRUE,
-  mc_B = 100  # smaller B for faster testing
+  rxu_range = c(0, 0.8) # smaller B for faster testing
 )
 
 

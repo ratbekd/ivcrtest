@@ -27,17 +27,18 @@ test_that("iv_cr_test returns expected CI structure", {
   H <- c("h1", "h2", "h3")
 
   # Run the function
-  res <- iv_cr_test(data = df, X = X, Y = Y, H = H, Z = Z, n = nrow(df), k = -1)
-
-  # --- Expectations ---
+  res <- iv_cr_test(data = df, X = X, Y = Y, H = H, Z = Z, n = nrow(df), k = -1, alpha = 0.05,
+                    seed = 123,
+                    rxu_range = c(0, 0.8),
+                    bias_mc = FALSE,
+                    mc_B = 500)
+    # --- Expectations ---
   # Check that result is a data frame
   expect_s3_class(res, "data.frame")
 
   # Check that it has required columns
   expected_cols <- c("Z", "plug_in", "CI_Bei", "CI_simple",
-                     "Plug_covered_CI_Bei", "Plug_covered_CI_s",
-                     "p_zero", "Target_interval",
-                     "Target_interval_overlap", "CI_Bei_contains_TI")
+                     "Zero_in_CI","p_zero","n")
 
   expect_true(all(expected_cols %in% colnames(res)))
 
@@ -47,5 +48,9 @@ test_that("iv_cr_test returns expected CI structure", {
   # Check that confidence intervals are strings formatted like [a,b]
   expect_true(grepl("^\\[.*\\]$", res$CI_Bei))
   expect_true(grepl("^\\[.*\\]$", res$CI_simple))
-  expect_true(grepl("^\\[.*\\]$", res$Target_interval))
+  # expect_true(grepl("^\\[.*\\]$", res$p_zero))
+  expect_true(is.numeric(res$p_zero) &&
+                !is.na(res$p_zero) &&
+                res$p_zero >= 0 &&
+                res$p_zero <= 1)
 })

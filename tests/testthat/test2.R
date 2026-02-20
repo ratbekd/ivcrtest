@@ -16,14 +16,12 @@ test_that("iv_cr_test runs end-to-end", {
     alpha = 0.05,
     seed = 123,
     rxu_range = c(-0.8,0),
-    bias_mc = TRUE,
-    mc_B = 500,
     X = "x", Y = "y", Z = "z",
     H = c("h1", "h2"),
     n = n,
     k = -1
   )
-
+  #
   expect_s3_class(res, "data.frame")
   expect_true(all(c( "CI_Bei", "CI_simple") %in% names(res)))
 })

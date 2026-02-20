@@ -49,14 +49,14 @@
 #' X <-as.character(colnames(H0))[2] ###ENDOEGENOUS variable
 #' Z <-as.character(colnames(H0))[3] ###IV variable
 #' H <-as.character(colnames(H0))[-(1:3)] ##### EXOGENOUS variables
-#' result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8),bias_mc = TRUE,mc_B = 500)
+#' result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8))
 #' print(result)
 
 iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
                     alpha = 0.05,
                     seed = 123,
                     rxu_range = c(0, 0.8),
-                    bias_mc = TRUE,
+                    bias_mc = FALSE,
                     mc_B = 500) {
   library(dplyr)
   library(ivreg)
@@ -81,8 +81,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
 
   # determine the number of rows
   n<-nrow(data)
-  #####SIV Method
-  ###Basic vectors for  SIV calculation###
+
   ### Initialization of the variables
   fitx=0
   fity=0
@@ -113,7 +112,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
   options(digits=5)
   ### IV ######################################
 
-  #z<-instru # to use cor(xz)>0
+  #z<-instrument # to use cor(xz)>0
   formula_str <- paste(paste0(Z," ~ "), paste(H, collapse = " + "))## Construct formula as a string
   formula <- as.formula(formula_str)# Convert to formula object
   fitz<-lm(formula, data=data)
@@ -135,16 +134,10 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
   ############################
 
   i=1
-  cat("\n=== Running Delta Method Coverage Test ===\n")
+  cat("\n=== Running MCUB Method Membership Test ===\n")
   bias_target <- 0  # or a pre-computed bias value
-  res <- check_compatibility( data=df,  n, k=-1,
-                              alpha = 0.05,
-                              seed = 123,
-                              rxu_range = c(-0.8,0),
-                              bias_mc = TRUE,
-                              mc_B = 500)
-
-
+  res <- check_compatibility(df, 1, n = nrow(df), k = 1,
+                             alpha = 0.05, rxu_range = c(0.0, 0.8))
 
   res
 
