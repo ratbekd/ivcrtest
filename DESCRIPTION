@@ -6,7 +6,7 @@ Authors@R: c(
     person("Ratbek", "Dzhumashev", email= "ratbek.dzhumashev@monash.edu", role = c("aut", "cre")),
     person("Ainura", "Tursunalieva", email = "ainura.tursunalieva@data61.csiro.au", role = "aut"))
 Description: The package estimates  linear regression models with one endogenous variable using the synthetic IV method.
-License: License: MIT + file LICENSE
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: 

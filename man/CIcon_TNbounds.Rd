@@ -21,34 +21,34 @@ CIcon_TNbounds(
 )
 }
 \arguments{
-\item{theta}{Scalar}
+\item{theta}{scalar}
 
 \item{deltahat}{(B x k) matrix}
 
-\item{Al}{Lower constraint matrix}
+\item{Al}{constraint matrice}
 
-\item{Au}{Upper constraint matrix}
+\item{Au}{constraint matrices}
 
-\item{sigma_l}{Standard deviations of lambda_hat_l}
+\item{sigma_l}{standard deviations of lambda_hat_l / u}
 
-\item{sigma_u}{Standard deviations of lambda_hat_u}
+\item{sigma_u}{standard deviations of lambda_hat_l / u}
 
-\item{corr_m}{Correlation matrix for TS statistic}
+\item{corr_m}{correlation blocks}
 
-\item{corr_l}{Correlation matrix for lower bound}
+\item{corr_l}{correlation blocks}
 
-\item{corr_u}{Correlation matrix for upper bound}
+\item{corr_u}{correlation blocks}
 
-\item{cLFl}{Critical value for lower}
+\item{cLFl}{critical values}
 
-\item{cLFu}{Critical value for upper}
+\item{cLFu}{critical values}
 
-\item{tol_r}{Tolerance for correlation}
+\item{tol_r}{tolerance for correlation threshold}
 
-\item{g}{Mapping function g(delta)}
+\item{g}{mapping function returning lambda estimates}
 }
 \value{
-list(th_1, th_2)
+list(th_1, th_2): lower / upper bounds vectors
 }
 \description{
 Computes list(th_1, th_2): lower / upper bounds vectors

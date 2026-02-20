@@ -8,11 +8,11 @@
 #' @param deltaSigma (B x k) matrix
 #' @param alphac adjusted critical level
 #' @param eta critical area level
-#' @param c_LF critical value
+#' @param c modifier
+#' @param c_bd critical value
 #' @param corr_m correlation blocks
 #' @param corr_l correlation blocks
 #' @param corr_u correlation blocks
-#' @param tol tolerance for correlation threshold
 #' @param tol_r tolerance for correlation threshold
 #' @param g mapping function returning lambda estimates
 #' @return Return final projection indicator

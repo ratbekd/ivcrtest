@@ -46,10 +46,6 @@ CIhybrid(
 \item{index}{index number}
 
 \item{g}{mapping function returning lambda estimates}
-
-\item{sigma_l}{standard deviations of lambda_hat_l / u}
-
-\item{sigma_u}{standard deviations of lambda_hat_l / u}
 }
 \value{
 Return final confidence intervals

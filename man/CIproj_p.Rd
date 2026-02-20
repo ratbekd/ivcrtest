@@ -24,9 +24,13 @@ CIproj_p(
 )
 }
 \arguments{
+\item{c}{modifier}
+
 \item{delta, }{d row or column vectors/matrices.}
 
 \item{alphac}{adjusted critical level}
+
+\item{c_bd}{critical value}
 
 \item{deltastar_demean}{row or column vectors/matrices.}
 
@@ -51,10 +55,6 @@ CIproj_p(
 \item{tol_r}{tolerance for correlation threshold}
 
 \item{g}{mapping function returning lambda estimates}
-
-\item{c_LF}{critical value}
-
-\item{tol}{tolerance for correlation threshold}
 }
 \value{
 Return final projection indicator
