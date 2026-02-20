@@ -15,7 +15,7 @@ iv_cr_test(
   alpha = 0.05,
   seed = 123,
   rxu_range = c(0, 0.8),
-  bias_mc = TRUE,
+  bias_mc = FALSE,
   mc_B = 500
 )
 }
@@ -60,9 +60,6 @@ Y <- as.character(colnames(H0))[1] ###OUTCOME variable
 X <-as.character(colnames(H0))[2] ###ENDOEGENOUS variable
 Z <-as.character(colnames(H0))[3] ###IV variable
 H <-as.character(colnames(H0))[-(1:3)] ##### EXOGENOUS variables
-result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8),bias_mc = TRUE,mc_B = 500)
-results_list <- result
-summary_df <- do.call(rbind, results_list)
-summary_df <- as.data.frame(summary_df)
-summary_df
+result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8))
+print(result)
 }

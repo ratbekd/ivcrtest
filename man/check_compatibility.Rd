@@ -4,29 +4,20 @@
 \alias{check_compatibility}
 \title{Computes the CIs and probabilities}
 \usage{
-check_compatibility(
-  data,
-  n,
-  k = -1,
-  alpha = 0.05,
-  seed = 123,
-  rxu_range = c(0, 0.8),
-  bias_mc = TRUE,
-  mc_B = 500
-)
+check_compatibility(df, i = 1, n, k = 1, alpha = 0.05, rxu_range = rxu_range)
 }
 \arguments{
-\item{data}{Data frame}
-
 \item{n}{Numeric scalar for size of the variables.}
 
 \item{k}{Numeric scalar for direction of endogenity.}
 
 \item{alpha}{Numeric scalar for the level of H0 test.}
 
-\item{seed}{Numeric scalar  for reproducibility.}
-
 \item{rxu_range}{Numeric interval for r_xu values.}
+
+\item{data}{Data frame}
+
+\item{seed}{Numeric scalar  for reproducibility.}
 
 \item{bias_mc}{Logial value.}
 
