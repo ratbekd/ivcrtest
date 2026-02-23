@@ -50,7 +50,14 @@
 #' H <-as.character(colnames(H0))[-(1:3)] ##### EXOGENOUS variables
 #' result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8))
 #' print(result)
-
+library(dplyr)
+library(ivreg)
+library(lmtest)
+library(sandwich)
+library(AER)
+library(MASS)
+library(e1071)
+library(zoo)
 
 
 iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
@@ -59,14 +66,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
                     rxu_range = c(0, 0.8),
                     bias_mc = FALSE,
                     mc_B = 500) {
-  library(dplyr)
-  library(ivreg)
-  library(lmtest)
-  library(sandwich)
-  library(AER)
-  library(MASS)
-  library(e1071)
-  library(zoo)
+
   ####################################
   if (!all(c(Y, X, H,Z) %in% names(data))) {
     stop("Some variables are missing in the dataset.")
@@ -78,7 +78,9 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
   #print(H)
   # formula_str <- paste(paste0(Y," ~ ", X,"+"), paste(H, collapse = " + "))## Construct formula as a string
   # formula <- as.formula(formula_str)# Convert to formula object
-  # #print(formula)
+  ## ── keep only complete cases on variables we actually use ─────────────────
+  vars_needed <- unique(c(Y, X, H, Z))
+  data <- data[complete.cases(data[, vars_needed]), vars_needed]
 
   # determine the number of rows
   n<-nrow(data)
@@ -99,7 +101,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
   formula <- as.formula(formula_str)# Convert to formula object
   fitx<-lm(formula, data=data)
   x<-resid(fitx)
-  s <- max(length(y),length(x))
+  s <- min(length(y),length(x))
   x <- x[1:s]
   y <- y[1:s]
   xx <- min(length((x-mean(x))),length((y-mean(y))))
@@ -107,7 +109,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
   #saving the transformed x and y
   data$x<-(x-mean(x))
   data$y<-(y-mean(y))
-  s <- max(length(y),length(x))
+  s <- min(length(y),length(x))
   x <- x[1:s]
   y <- y[1:s]
   options(digits=5)
@@ -125,7 +127,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
 
   z<-predict(lm(z[1:k1]~x[1:k1]+y[1:k1],data=data))
 
-  #df1 <- data.frame(x[1:k1],y[1:k1],z0p[1:k1])
+
   df <- data.frame(x = x[1:k1], y = y[1:k1], z = z[1:k1])
   r_xz<-cor(df$x,df$z,use = "complete.obs",method=c("pearson"))
   r_yz<-cor(df$y,df$z,use = "complete.obs",method=c("pearson"))

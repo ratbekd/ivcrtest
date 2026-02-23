@@ -37,26 +37,20 @@ result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = 
 
 # Output
 
-results_list <- result
-
-summary_df <- do.call(rbind, results_list)
-
-summary_df <- as.data.frame(summary_df)
-
-summary_df
+print( result)
 
 One obtains these results:
                                  
 Z                                   IV
 
-plug_in                   [-0.79,0.01]
+plug_in                   [0.011, 0.806]
 
-CI_Bei                    [-0.83,0.08]
+CI_Bei                    [-0.054, 0.845]
 
-Plug_covered_CI_Bei                  ✓
-
-CI_simple                 [-0.86,0.13]
+CI_simple                 [-0.108, 0.878]
 
 Zero_in_CI_Bei                       ✓
+
 p_zero                               1
 
+n                                   1600
