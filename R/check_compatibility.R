@@ -36,7 +36,14 @@ check_compatibility <- function(df, i = 1, n, k = 1,
                                 alpha     = 0.05,
                                 rxu_range = rxu_range) {
 
-    # ---- validate inputs ----
+  # ---- packages ----
+  library(dplyr)
+  library(ivreg)
+  library(lmtest)
+  library(sandwich)
+  library(AER)
+
+  # ---- validate inputs ----
   if (!all(c("x", "y", "z") %in% names(df))) {
     stop("DataFrame must contain columns 'x', 'y', 'z'")
   }
