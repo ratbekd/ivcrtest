@@ -26,7 +26,7 @@ CIproj_p <- function(c, delta, alphac, c_bd,
                      corr_m, corr_l, corr_u,
                      eta, tol_r, g) {
   # -------------------------------
-  #
+  # Equivalent to MATLAB CIproj_p.m
   # -------------------------------
   # g : function(delta_matrix) -> lambda_matrix
   # delta, deltastar_demean: row or column vectors/matrices

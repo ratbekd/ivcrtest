@@ -14,7 +14,7 @@
 CIcon <- function(deltahat, deltaSigma, Al, Au,
                   c_LF, alphac, tol, tol_r, g) {
   # -------------------------------
-  # Compute confidence interval bounds
+  # Equivalent to MATLAB CIcon.m
   # -------------------------------
 
   kk <- nrow(Al)
@@ -37,24 +37,21 @@ CIcon <- function(deltahat, deltaSigma, Al, Au,
 
   lb <- gval - sigma_l * c_LF
   ub <- gval + sigma_u * c_LF
-  lb <- min(lb, na.rm = TRUE)
-  ub <- max(ub, na.rm = TRUE)
+  lb <- min(lb)
+  ub <- max(ub)
 
   mid <- (lb + ub) / 2
-  lb_pt <- min(gval, na.rm = TRUE)
-  ub_pt <- max(gval, na.rm = TRUE)
+  lb_pt <- min(gval)
+  ub_pt <- max(gval)
 
   # ----- 3. CI lower bound -----
   rej <- 1
   theta <- lb
 
-  while (
-    !is.na(rej) && !is.na(mid) && !is.na(lb_pt) &&
-    rej == 1 && theta <= min(mid, lb_pt, na.rm = TRUE)
-  ) {
-    Tcl <- min((gval - theta) / sigma_l, na.rm = TRUE)
-    Tcu <- min((theta - gval) / sigma_u, na.rm = TRUE)
-    Tc <- max(Tcl, Tcu, na.rm = TRUE)
+  while (rej == 1 && theta <= min(mid, lb_pt)) {
+    Tcl <- min((gval - theta) / sigma_l)
+    Tcu <- min((theta - gval) / sigma_u)
+    Tc <- max(Tcl, Tcu)
 
     th_bounds <- CIcon_TNbounds(theta, matrix(deltahat, nrow = 1),
                                 Al, Au, sigma_l, sigma_u,
@@ -67,20 +64,16 @@ CIcon <- function(deltahat, deltaSigma, Al, Au,
     rej <- as.numeric(Tc > t)
     theta <- theta + tol
   }
-
   CI_lower <- theta
 
   # ----- 4. CI upper bound -----
   rej <- 1
   theta <- ub
 
-  while (
-    !is.na(rej) && !is.na(mid) && !is.na(ub_pt) &&
-    rej == 1 && theta >= max(mid, ub_pt, na.rm = TRUE)
-  ) {
-    Tcl <- min((gval - theta) / sigma_l, na.rm = TRUE)
-    Tcu <- min((theta - gval) / sigma_u, na.rm = TRUE)
-    Tc <- max(Tcl, Tcu, na.rm = TRUE)
+  while (rej == 1 && theta >= max(mid, ub_pt)) {
+    Tcl <- min((gval - theta) / sigma_l)
+    Tcu <- min((theta - gval) / sigma_u)
+    Tc <- max(Tcl, Tcu)
 
     th_bounds <- CIcon_TNbounds(theta, matrix(deltahat, nrow = 1),
                                 Al, Au, sigma_l, sigma_u,
@@ -93,7 +86,6 @@ CIcon <- function(deltahat, deltaSigma, Al, Au,
     rej <- as.numeric(Tc > t)
     theta <- theta - tol
   }
-
   CI_upper <- theta
 
   # ----- 5. Return final CI -----

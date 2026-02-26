@@ -111,7 +111,7 @@ iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
   i=1
   cat("\n=== Running MCUB Method Membership Test ===\n")
   bias_target <- 0  # or a pre-computed bias value
-  res <- check_compatibility(df, 1, n = nrow(df), k = 1,
+  res <- check_compatibility(df, i=1, n = nrow(df), k = 1,
                              alpha = 0.05, rxu_range = c(0.0, 0.8))
 
   res

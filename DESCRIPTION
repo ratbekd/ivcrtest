@@ -16,13 +16,13 @@ Suggests:
     e1071,
     sandwich,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ivreg,
+    lmtest,
+    dplyr
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
 Imports:
     stats,
     MASS,
-    Matrix,
-    ivreg,
-    lmtest,
-    dplyr
+    Matrix

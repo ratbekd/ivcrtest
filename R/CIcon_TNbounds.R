@@ -19,49 +19,32 @@ CIcon_TNbounds <- function(theta, deltahat,
                            sigma_l, sigma_u,
                            corr_m, corr_l, corr_u,
                            cLFl, cLFu, tol_r, g) {
-  # -----------------------------------------------
-  #
-  # -----------------------------------------------
-  # Inputs:
-  #  - theta: scalar
-  #  - deltahat: (B x k) matrix
-  #  - Al, Au: constraint matrices
-  #  - sigma_l, sigma_u: standard deviations of lambda_hat_l / u
-  #  - corr_m, corr_l, corr_u: correlation blocks
-  #  - cLFl, cLFu: critical values
-  #  - tol_r: tolerance for correlation threshold
-  #  - g: mapping function returning lambda estimates
-  #
-  # Outputs:
-  #  - list(th_1, th_2): lower / upper bounds vectors
-
-  B <- nrow(deltahat)
+  B   <- nrow(deltahat)
   k_l <- nrow(Al)
   k_u <- nrow(Au)
 
-  # ----- 1. Lambda estimates -----
   lambdahat_l <- g(deltahat)
-  lambdahat_u <- lambdahat_l  # same in original MATLAB
+  lambdahat_u <- lambdahat_l
 
-  # ----- 2. Compute T statistics -----
-  Tlb <- sweep(lambdahat_l - theta, 2, sigma_l, "/")
-  Tub <- sweep(theta - lambdahat_u, 2, sigma_u, "/")
+  Tlb <- sweep(lambdahat_l - theta, 2, sigma_l, "/")   # B x k_l
+  Tub <- sweep(theta - lambdahat_u, 2, sigma_u, "/")   # B x k_u
 
-  Tl <- apply(Tlb, 1, min)
-  bl <- apply(Tlb, 1, which.min)
+  Tl <- apply(Tlb, 1, min)         # length B
+  bl <- apply(Tlb, 1, which.min)   # argmin per row (1..k_l)
   Tu <- apply(Tub, 1, min)
-  bu <- apply(Tub, 1, which.min)
+  bu <- apply(Tub, 1, which.min)   # argmin per row (1..k_u)
 
-  # Extract relevant correlation rows/cols
-  #corr_m_blb <- corr_m[cbind(bl, 1:ncol(corr_m))]  # this will be reshaped
-  corr_m_blb <- corr_m[bl, , drop = FALSE]
-  corr_m_bub <- t(corr_m[, bu, drop = FALSE])
+  # corr_m rows/cols at those argmins
+  corr_m_blb <- corr_m[bl, , drop = FALSE]           # B x k_u
+  corr_m_bub <- t(corr_m[, bu, drop = FALSE])        # B x k_l
 
-  # ----- 3. Case: Tl >= Tu (lower side) -----
+  ## ----- Case Tl >= Tu : “lower” side -----
   # TS part
-  tTS_l <- matrix(1e10, nrow = B, ncol = k_u)
-  tTS_ll <- (1 + corr_m_blb)^(-1) * (matrix(Tub, nrow = B, ncol = k_u) + corr_m_blb * Tl)
-  tTS_l[(1 + corr_m_blb) > tol_r] <- tTS_ll[(1 + corr_m_blb) > tol_r]
+  tTS_l  <- matrix(1e10, nrow = B, ncol = k_u)
+  # Broadcast Tl and Tub row-wise
+  tTS_ll <- (1 + corr_m_blb)^(-1) * (Tub + corr_m_blb * Tl)
+  maskTS_l <- (1 + corr_m_blb) > tol_r
+  tTS_l[maskTS_l] <- tTS_ll[maskTS_l]
 
   th_1_1 <- apply(tTS_l, 1, min) * (Tl >= Tu)
   th_1_1[th_1_1 == 1e10] <- -1e10
@@ -70,23 +53,25 @@ CIcon_TNbounds <- function(theta, deltahat,
   # LF part
   tLFl <- rep(cLFl, B)
 
-  # B part
-  # taux_1 <- (1 - corr_l[cbind(bl, 1:ncol(corr_l))])^(-1) *
-  #   (Tlb[cbind(1:B, bl)] - corr_l[cbind(bl, 1:ncol(corr_l))] * Tl)
+  # B part  (*** fixed row-wise broadcasting ***)
+  # For each i: taux_1[i,j] = (1 - corr_l[bl[i], j])^{-1} * ( Tlb[i, bl[i]] - corr_l[bl[i], j] * Tl[i] )
+  CL_bl   <- corr_l[bl, , drop = FALSE]                                 # B x k_l
+  Tlb_min <- matrix(Tlb[cbind(1:B, bl)], nrow = B, ncol = k_l)          # B x k_l (rep each row)
+  Tl_rep  <- matrix(Tl, nrow = B, ncol = k_l)
+  taux_1  <- (1 - CL_bl)^(-1) * (Tlb_min - CL_bl * Tl_rep)              # B x k_l
 
-  corr_l_rows <- corr_l[cbind(bl, bl)]
-  taux_1 <- (1 - corr_l_rows)^(-1) * (Tlb[cbind(1:B, bl)] - corr_l_rows * Tl)
+  tB_l2   <- matrix(1e10, nrow = B, ncol = k_l)
+  maskB_l <- (1 > CL_bl + tol_r)
+  tB_l2[maskB_l] <- taux_1[maskB_l]
 
-  tB_l2 <- matrix(1e10, nrow = B, ncol = k_l)
-  mask1 <- (1 > corr_l[bl, , drop = FALSE] + tol_r)
-  tB_l2[mask1] <- taux_1[mask1]
   th_2_1 <- apply(cbind(tLFl, tB_l2), 1, min) * (Tl >= Tu)
 
-  # ----- 4. Case: Tl < Tu (upper side) -----
+  ## ----- Case Tl < Tu : “upper” side -----
   # TS part
-  tTS_u <- matrix(1e10, nrow = B, ncol = k_l)
-  tTS_u1 <- (1 + corr_m_bub)^(-1) * (matrix(Tlb, nrow = B, ncol = k_l) + corr_m_bub * Tu)
-  tTS_u[(1 + corr_m_bub) > tol_r] <- tTS_u1[(1 + corr_m_bub) > tol_r]
+  tTS_u  <- matrix(1e10, nrow = B, ncol = k_l)
+  tTS_u1 <- (1 + corr_m_bub)^(-1) * (Tlb + corr_m_bub * Tu)
+  maskTS_u <- (1 + corr_m_bub) > tol_r
+  tTS_u[maskTS_u] <- tTS_u1[maskTS_u]
 
   th_1_2 <- apply(tTS_u, 1, min) * (Tl < Tu)
   th_1_2[th_1_2 == 1e10] <- -1e10
@@ -95,20 +80,19 @@ CIcon_TNbounds <- function(theta, deltahat,
   # LF part
   tLFu <- rep(cLFu, B)
 
-  # B part
-  #taux_2 <- (1 - corr_u[cbind(bu, 1:ncol(corr_u))])^(-1) *
-  #(Tub[cbind(1:B, bu)] - corr_u[cbind(bu, 1:ncol(corr_u))] * Tu)
-  corr_u_rows <- corr_u[cbind(bu, bu)]
-  taux_2 <- (1 - corr_u_rows)^(-1) * (Tub[cbind(1:B, bu)] - corr_u_rows * Tu)
+  # B part  (*** fixed row-wise broadcasting ***)
+  CU_bu   <- corr_u[bu, , drop = FALSE]                                 # B x k_u
+  Tub_min <- matrix(Tub[cbind(1:B, bu)], nrow = B, ncol = k_u)          # B x k_u
+  Tu_rep  <- matrix(Tu, nrow = B, ncol = k_u)
+  taux_2  <- (1 - CU_bu)^(-1) * (Tub_min - CU_bu * Tu_rep)              # B x k_u
 
-  tB_u2 <- matrix(1e10, nrow = B, ncol = k_u)
-  mask2 <- (1 > corr_u[bu, , drop = FALSE] + tol_r)
-  tB_u2[mask2] <- taux_2[mask2]
+  tB_u2   <- matrix(1e10, nrow = B, ncol = k_u)
+  maskB_u <- (1 > CU_bu + tol_r)
+  tB_u2[maskB_u] <- taux_2[maskB_u]
+
   th_2_2 <- apply(cbind(tLFu, tB_u2), 1, min) * (Tl < Tu)
 
-  # ----- 5. Combine results -----
   th_1 <- th_1_1 + th_1_2
   th_2 <- th_2_1 + th_2_2
-
-  return(list(th_1 = th_1, th_2 = th_2))
+  list(th_1 = th_1, th_2 = th_2)
 }

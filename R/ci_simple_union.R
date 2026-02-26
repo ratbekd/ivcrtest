@@ -10,6 +10,7 @@
 #' @param seed Numerical scalar for the seed of the replications.
 #' @param tol Numerical scalar for the tolerance level in bootstrap.
 #' @param make_psd  Logical value.
+#' @param Sigma_rho a covariance matrix.
 #' @return Simple CIs.
 #' @export
 

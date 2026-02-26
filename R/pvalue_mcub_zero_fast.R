@@ -1,3 +1,19 @@
+#' Fast p-value computation for MCUB zero test
+#' @param deltahat Numeric vector of sample correlations.
+#' @param deltaSigma Covariance matrix of deltahat.
+#' @param Al Lower Jacobian matrix.
+#' @param Au Upper Jacobian matrix.
+#' @param g Function mapping delta to lambda.
+#' @param eta Numeric tuning parameter.
+#' @param B_fast Integer number of fast bootstrap draws.
+#' @param Blarge_fast Integer number of large bootstrap draws.
+#' @param tol Numeric tolerance.
+#' @param tol_r Numeric tolerance for correlations.
+#' @param alpha_grid Numeric vector of alpha values for grid search.
+#' @param refine_steps Integer number of bisection refinement steps.
+#' @param seed Integer seed for reproducibility.
+#' @return Numeric p-value.
+#' @export
 pvalue_mcub_zero_fast <- function(deltahat, deltaSigma, Al, Au, g,
                                   eta = 0.001,
                                   B_fast = 600, Blarge_fast = 6000,
