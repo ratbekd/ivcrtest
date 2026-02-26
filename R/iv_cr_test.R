@@ -1,64 +1,36 @@
-#' Perform Instrumental Variable Correlation Restirction test
-#' @param data Data frame
-#' @param n Numeric scalar for size of the variables.
-#' @param k Numeric scalar for direction of endogenity.
-#' @param alpha Numeric scalar for the level of H0 test.
-#' @param rxu_range Numeric interval for r_xu values.
-#' @param seed Numeric scalar  for reproducibility.
-#' @param bias_mc Logical value.
-#' @param mc_B Numeric scalar for MC correction simulations.
-#' @param data A data frame.
-#' @param Y Name of the dependent variable.
-#' @param X Name of the endogenous variable.
-#' @param Z Name of the instrumental variable.
-#' @param H Vector of exogenous variable names.
-#' @return A list containing CIs and coverage or containment probabilities.
-#' @export
-#' @importFrom stats  predict
-#' @importFrom stats  complete.cases
-#' @importFrom stats  fitted
-#' @importFrom stats pf
-#' @importFrom stats pchisq
-#' @importFrom stats var
-#' @importFrom stats as.formula
-#' @importFrom stats lm
-#' @importFrom stats cor
-#' @importFrom stats cov
-#' @importFrom stats residuals
-#' @importFrom stats df.residual
-#' @importFrom stats qt
-#' @importFrom stats sd
-#' @importFrom stats rnorm
-#' @importFrom stats pnorm
-#' @importFrom stats qnorm
-#' @importFrom stats predict
-#' @importFrom stats df
-#' @importFrom stats optim
-#' @importFrom stats resid
-#' @importFrom stats quantile
+#' Perform Instrumental Variable Correlation Restriction Test
 #'
+#' @param data A data frame containing all variables.
+#' @param X Character. Name of the endogenous regressor.
+#' @param Y Character. Name of the dependent variable.
+#' @param H Character vector. Names of exogenous control variables.
+#' @param Z Character. Name of the instrumental variable.
+#' @param n Ignored; determined internally from \code{data}.
+#' @param k Numeric scalar for direction of endogeneity. Default \code{-1}.
+#' @param alpha Numeric significance level. Default \code{0.05}.
+#' @param seed Integer seed for reproducibility. Default \code{123}.
+#' @param rxu_range Numeric vector of length 2 for the \eqn{r_{xu}} grid.
+#' @param bias_mc Logical. Monte Carlo bias correction. Default \code{FALSE}.
+#' @param mc_B Integer number of MC draws. Default \code{500}.
+#' @return A data frame with confidence intervals and probabilities.
+#' @export
+#' @importFrom stats complete.cases as.formula lm resid predict cor cov
+#' @importFrom stats pf pchisq var df.residual qt sd rnorm pnorm qnorm
+#' @importFrom stats optim quantile fitted
 #' @examples
-#' df <- wooldridge::card  # Use sample data set
-#' data <- df[complete.cases(df), ]  # Remove missing values
-#' attach(data)
-#' H0 <- data.frame(lwage, educ,fatheduc, exper,expersq ,black ,south ,smsa ,smsa66,reg661, reg662 ,reg663, reg664,
-#'reg665, reg666 ,reg667,reg668)
-# Vector of variables used in the regression. Firts var is outcome, the second var is endogenous regressor
-#' Y <- as.character(colnames(H0))[1] ###OUTCOME variable
-#' X <-as.character(colnames(H0))[2] ###ENDOEGENOUS variable
-#' Z <-as.character(colnames(H0))[3] ###IV variable
-#' H <-as.character(colnames(H0))[-(1:3)] ##### EXOGENOUS variables
-#' result <- iv_cr_test(data,X,Y,H,Z,  n, k=-1,alpha = 0.05,seed = 123,rxu_range = c(0, 0.8))
+#' data <- wooldridge::card
+#' data <- data[complete.cases(data), ]
+#' Y <- "lwage"
+#' X <- "educ"
+#' Z <- "fatheduc"
+#' H <- c("exper", "expersq", "black", "south", "smsa", "smsa66",
+#'        "reg661", "reg662", "reg663", "reg664",
+#'        "reg665", "reg666", "reg667", "reg668")
+#' result <- iv_cr_test(data, X, Y, H, Z,
+#'                      k = -1, alpha = 0.05, seed = 123,
+#'                      rxu_range = c(0, 0.8))
 #' print(result)
-library(dplyr)
-library(ivreg)
-library(lmtest)
-library(sandwich)
-library(AER)
-library(MASS)
-library(e1071)
-library(zoo)
-
+#'
 
 iv_cr_test <- function(data,X,Y,H,Z,  n=NULL, k=-1,
                     alpha = 0.05,
